@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: user-abc
+      POSTGRES_PASSWORD: password-1234
+      POSTGRES_DB: nextjs_prisma
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    command: npm run dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://user-abc:password-1234@db:5432/nextjs_prisma
+    depends_on:
+      - db
+
+volumes:
+  db_data:
